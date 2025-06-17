@@ -130,7 +130,7 @@ resource "aws_instance" "ubuntu_victim_instances" {
   for_each      = var.instance_configs # Iterate over instance configurations
   ami           = data.aws_ami.ubuntu_noble.id
   instance_type = each.value.instance_type
-  key_name      = var.key_pair_name
+  key_name      = aws_key_pair.mykey.key_name
 
   # Attach network interfaces dynamically based on instance config
   dynamic "network_interface" {
@@ -149,3 +149,28 @@ resource "aws_instance" "ubuntu_victim_instances" {
     Vendor = each.value.vendor # gets the vendor name from the instance config
   })
 }
+
+# Key Pair for SSH access
+resource "tls_private_key" "ssh_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+  
+}
+resource "aws_key_pair" "mykey" {
+  key_name   = var.key_name
+  public_key = tls_private_key.ssh_key.public_key_openssh
+  tags = merge(var.common_tags, {
+    Name = var.key_name
+    Vendor = "ALL"
+  })
+}
+#Output for the SSH Key Pair 
+output "private_key_pem" {
+  value     = tls_private_key.ssh_key.private_key_pem
+  sensitive = true
+}
+
+output "save_private_key_to_file" {
+  value = "Run this command to save the key: \nterraform output -raw private_key_pem > mykey.pem && chmod 400 mykey.pem"
+}
+

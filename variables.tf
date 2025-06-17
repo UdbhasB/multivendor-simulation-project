@@ -155,11 +155,11 @@ variable "network_interface_configs" {
 }
 
 # New variable for your SSH Key Pair
-variable "key_pair_name" {
-  description = "The name of the EC2 Key Pair to allow SSH access."
-  type        = string
-  default     = "Key-projectLab" #Created manually in AWS console
-}
+# variable "key_pair_name" {
+#   description = "The name of the EC2 Key Pair to allow SSH access."
+#   type        = string
+#   default     = "Key-projectLab" #Created manually in AWS console
+# }
 # New variable for instance configurations
 variable "instance_configs" {
   description = "A map of instance configurations including associated ENIs."
@@ -185,4 +185,10 @@ variable "instance_configs" {
       network_interfaces_keys = ["VENDOR3-VICTIM-UBUNTU-PRIMARY-ENI", "VENDOR3-VICTIM-UBUNTU-MGMT-ENI"]
     }
   }
+}
+#variable for key pair
+variable "key_name" {
+  description = "The name of the EC2 Key Pair to allow SSH access."
+  type        = string
+  default     = "udbhas-ec2-key" #Created with the tf code
 }
